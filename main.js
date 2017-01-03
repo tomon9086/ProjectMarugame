@@ -1,61 +1,25 @@
-var Slack = require('./libs/node-slack-sdk-master/');
-
-// slack setting
-var token = '*************'; //Slack BotsのAPI Tokenをいれる
-var autoReconnect = true;
-var autoMark = true;
-
-var slack = new Slack(token, autoReconnect, autoMark);
-
 /**
- * 起動した時
+ * Example for creating and working with the Slack RTM API.
  */
-slack.on('open', function(){
-    console.log('open');
+
+/* eslint no-console:0 */
+
+var RtmClient = require('@slack/client').RtmClient;
+var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
+
+var token = process.env.SLACK_API_TOKEN || '';
+
+var rtm = new RtmClient(token, { logLevel: 'debug' });
+rtm.start();
+
+rtm.on(RTM_EVENTS.MESSAGE, (message) => {
+  console.log('Message:', message);
 });
 
-/**
- * 投稿された時
- */
-slack.on("message", function(message){
-    // message.channelに入っているチャンネルIDからチャンネル情報の取得
-    var channel = slack.getChannelGroupOrDMByID(message.channel);
-    // message.userに入っているユーザーIDからユーザー情報の取得
-    var user = slack.getUserByID(message.user);
-
-    // メッセージ本文
-    var text = message.text;
-
-    if (/おはようございます/.test(text)) {
-        // ここでAirpoの出勤APIを叩く
-        req.post({ ... },function(){
-            channel.send( "<@" + user.id + ">さん、出勤スタンプを押しました！" );
-        });
-    }
-
-    if (/おつかれさまでした/.test(text)) {
-        // ここでAirpoの退勤APIを叩く
-        req.post({ ... },function(){
-            channel.send( "<@" + user.id + ">さん、退勤スタンプを押しました！" );
-        });
-    }
-
-    if (/誰がいる/.test(text)) {
-        // ここでAirpoの出勤状況確認APIを叩く
-        req.post({ ... },function(){
-            channel.send( "◯◯さん,✕✕さんがお仕事中みたいですよ！" );
-        });
-    }
+rtm.on(RTM_EVENTS.REACTION_ADDED, (reaction) => {
+  console.log('Reaction added:', reaction);
 });
 
-/**
- * エラー
- */
-slack.on('error', function(error){
-    console.error('Error: %s', error);
+rtm.on(RTM_EVENTS.REACTION_REMOVED, (reaction) => {
+  console.log('Reaction removed:', reaction);
 });
-
-/**
- * ログイン
- */
-slack.login();

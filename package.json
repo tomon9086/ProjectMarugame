@@ -1,0 +1,14 @@
+{
+  "name": "ProjectMarugame",
+  "version": "1.0.0",
+  "main": "main.js",
+  "repository": "git@github.com:tomon9086/ProjectMarugame.git",
+  "author": "tomon9086",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/client": "^3.8.1"
+  },
+  "scripts": {
+    "start": "node main.js"
+  }
+}
